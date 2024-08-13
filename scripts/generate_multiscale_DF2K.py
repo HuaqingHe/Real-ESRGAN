@@ -40,8 +40,8 @@ if __name__ == '__main__':
     It is now used for DF2K dataset (DIV2K + Flickr 2K)
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', type=str, default='datasets/DF2K/DF2K_HR', help='Input folder')
-    parser.add_argument('--output', type=str, default='datasets/DF2K/DF2K_multiscale', help='Output folder')
+    parser.add_argument('--input', type=str, default='/root/cloud/cephfs-group-hdvideo_group/Datasets/Game_training/APISR_datasets/APISR_720p_4xcrop', help='Input folder')
+    parser.add_argument('--output', type=str, default='/root/cloud/cephfs-group-hdvideo_group/Datasets/Game_training/Real-ESRGAN_datasets/Wangzhe/Wangzhe_multiscale', help='Output folder')
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)

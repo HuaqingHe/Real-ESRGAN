@@ -146,12 +146,13 @@ class Writer:
             self.stream_writer = (
                 ffmpeg.input('pipe:', format='rawvideo', pix_fmt='bgr24', s=f'{out_width}x{out_height}',
                              framerate=fps).output(
-                                 audio,
+                                 audio, # addition for audio
                                  video_save_path,
                                  pix_fmt='yuv420p',
                                  vcodec='libx264',
                                  loglevel='error',
-                                 acodec='copy').overwrite_output().run_async(
+                                 acodec='copy' # addition for audio
+                                 ).overwrite_output().run_async(
                                      pipe_stdin=True, pipe_stdout=True, cmd=args.ffmpeg_bin))
         else:
             self.stream_writer = (
@@ -202,7 +203,12 @@ def inference_video(args, video_save_path, device=None, total_workers=1, worker_
         ]
 
     # ---------------------- determine model paths ---------------------- #
-    model_path = os.path.join('weights', args.model_name + '.pth')
+    if args.model_path is not None:
+        model_path = os.path.join('weights', args.model_path + '.pth')
+    else:
+        model_path = os.path.join('weights', args.model_name + '.pth')
+    print(f'Model path: {model_path}')
+    print(f'Model name: {args.model_name}')
     if not os.path.isfile(model_path):
         ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
         for url in file_url:
@@ -278,7 +284,13 @@ def inference_video(args, video_save_path, device=None, total_workers=1, worker_
 
 def run(args):
     args.video_name = osp.splitext(os.path.basename(args.input))[0]
-    video_save_path = osp.join(args.output, f'{args.video_name}_{args.suffix}.mp4')
+    if args.model_path is not None:
+        video_save_fold = osp.join(args.output, args.model_path)
+    else:
+        video_save_fold = osp.join(args.output, args.model_name)
+    if not osp.exists(video_save_fold):
+        os.makedirs(video_save_fold, exist_ok=True)
+    video_save_path = osp.join(video_save_fold, f'{args.video_name}.mp4')
 
     if args.extract_frame_first:
         tmp_frames_folder = osp.join(args.output, f'{args.video_name}_inp_tmp_frames')
@@ -335,6 +347,14 @@ def main():
         '--model_name',
         type=str,
         default='realesr-animevideov3',
+        help=('Model names: realesr-animevideov3 | RealESRGAN_x4plus_anime_6B | RealESRGAN_x4plus | RealESRNet_x4plus |'
+              ' RealESRGAN_x2plus | realesr-general-x4v3'
+              'Default:realesr-animevideov3'))
+    parser.add_argument(
+        '-p',
+        '--model_path',
+        type=str,
+        default=None,
         help=('Model names: realesr-animevideov3 | RealESRGAN_x4plus_anime_6B | RealESRGAN_x4plus | RealESRNet_x4plus |'
               ' RealESRGAN_x2plus | realesr-general-x4v3'
               'Default:realesr-animevideov3'))

@@ -119,10 +119,10 @@ def worker(path, opt):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input', type=str, default='datasets/DF2K/DF2K_HR', help='Input folder')
-    parser.add_argument('--output', type=str, default='datasets/DF2K/DF2K_HR_sub', help='Output folder')
-    parser.add_argument('--crop_size', type=int, default=480, help='Crop size')
-    parser.add_argument('--step', type=int, default=240, help='Step for overlapped sliding window')
+    parser.add_argument('--input', type=str, default='/root/cloud/cephfs-group-hdvideo_group/Datasets/Game_training/Real-ESRGAN_datasets/Wangzhe/Wangzhe_multiscale', help='Input folder')
+    parser.add_argument('--output', type=str, default='/root/cloud/cephfs-group-hdvideo_group/Datasets/Game_training/Real-ESRGAN_datasets/Wangzhe/Wangzhe_multiscale_sub', help='Output folder')
+    parser.add_argument('--crop_size', type=int, default=400, help='Crop size')
+    parser.add_argument('--step', type=int, default=200, help='Step for overlapped sliding window')
     parser.add_argument(
         '--thresh_size',
         type=int,

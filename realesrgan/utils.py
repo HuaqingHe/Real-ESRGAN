@@ -63,11 +63,29 @@ class RealESRGANer():
             loadnet = torch.load(model_path, map_location=torch.device('cpu'))
 
         # prefer to use params_ema
+        # 我想看看loadnet里面有什么东西
+        print(model_path)
+        # print(loadnet)
+        print(loadnet.keys())
         if 'params_ema' in loadnet:
             keyname = 'params_ema'
-        else:
+            print(loadnet['params_ema'].keys())
+            model.load_state_dict(loadnet[keyname], strict=True)
+        elif 'params' in loadnet:
             keyname = 'params'
-        model.load_state_dict(loadnet[keyname], strict=True)
+            print(loadnet['params'].keys())
+            model.load_state_dict(loadnet[keyname], strict=True)
+        else:
+            from collections import OrderedDict
+            new_state_dict = OrderedDict()
+            # 把loadnet中body开头替换成model开头
+
+            for k, v in loadnet.items():
+                if "model" in k:
+                    k = k.replace("model", "body")
+                new_state_dict[k] = v
+            print(new_state_dict.keys())
+            model.load_state_dict(new_state_dict, strict=True)
 
         model.eval()
         self.model = model.to(self.device)
